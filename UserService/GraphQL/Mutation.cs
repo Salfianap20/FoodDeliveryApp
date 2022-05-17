@@ -1,6 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using HotChocolate.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UserService.Models;
@@ -25,7 +27,15 @@ namespace UserService.GraphQL
                 Username = input.UserName,
                 Password = BCrypt.Net.BCrypt.HashPassword(input.Password) // encrypt password
             };
-
+            var memberRole = context.Roles.Where(m => m.Name == "BUYER").FirstOrDefault();
+            if (memberRole == null)
+                throw new Exception("Invalid Role");
+            var userRole = new UserRole
+            {
+                RoleId = memberRole.Id,
+                UserId = newUser.Id
+            };
+            newUser.UserRoles.Add(userRole);
             // EF
             var ret = context.Users.Add(newUser);
             await context.SaveChangesAsync();
@@ -69,7 +79,7 @@ namespace UserService.GraphQL
                     }
                 }
 
-                var expired = DateTime.Now.AddHours(3);
+                var expired = DateTime.Now.AddHours(24);
                 var jwtToken = new JwtSecurityToken(
                     issuer: tokenSettings.Value.Issuer,
                     audience: tokenSettings.Value.Audience,
@@ -85,6 +95,59 @@ namespace UserService.GraphQL
             }
 
             return await Task.FromResult(new UserToken(null, null, Message: "Username or password was invalid"));
+        }
+
+        [Authorize(Roles = new[] { "ADMIN" })]
+        public async Task<User> UpdateUserAsync(
+           UserData input,
+           [Service] Project1Context context)
+        {
+            var user = context.Users.Where(o => o.Id == input.Id).FirstOrDefault();
+            if (user != null)
+            {
+                user.FullName = input.FullName;
+                user.Email = input.Email;
+                user.Username = input.Username;
+
+                context.Users.Update(user);
+                await context.SaveChangesAsync();
+            }
+
+            return await Task.FromResult(user);
+        }
+
+        [Authorize(Roles = new[] { "ADMIN" })]
+        public async Task<User> DeleteUserByIdAsync(
+            int id,
+            [Service] Project1Context context)
+        {
+            var user = context.Users.Where(o => o.Id == id).Include(o => o.UserRoles).FirstOrDefault();
+            if (user != null)
+            {
+                context.Users.Remove(user);
+                await context.SaveChangesAsync();
+            }
+
+            return await Task.FromResult(user);
+        }
+
+        [Authorize]
+        public async Task<User> ChangePasswordByUserAsync(
+            UserData input,
+            [Service] Project1Context context)
+        {
+            var user = context.Users.Where(o => o.Id == input.Id).FirstOrDefault();
+            if (user != null)
+            {
+                user.FullName = input.FullName;
+                user.Email = input.Email;
+                user.Username = input.Username;
+
+                context.Users.Update(user);
+                await context.SaveChangesAsync();
+            }
+
+            return await Task.FromResult(user);
         }
     }
 }
