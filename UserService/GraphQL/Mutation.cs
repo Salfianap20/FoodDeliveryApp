@@ -133,15 +133,13 @@ namespace UserService.GraphQL
 
         [Authorize]
         public async Task<User> ChangePasswordByUserAsync(
-            UserData input,
-            [Service] Project1Context context)
+           UserChangePassword input,
+           [Service] Project1Context context)
         {
             var user = context.Users.Where(o => o.Id == input.Id).FirstOrDefault();
             if (user != null)
             {
-                user.FullName = input.FullName;
-                user.Email = input.Email;
-                user.Username = input.Username;
+                user.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
 
                 context.Users.Update(user);
                 await context.SaveChangesAsync();
