@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProductService.Models
+namespace FoodService.Models
 {
     public partial class User
     {

@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProductService.Models
+namespace FoodService.Models
 {
-    public partial class Order
+    public partial class Courier
     {
-        public Order()
+        public Courier()
         {
             OrderDetails = new HashSet<OrderDetail>();
         }
 
         public int Id { get; set; }
-        public string Code { get; set; } = null!;
-        public int UserId { get; set; }
+        public string CourierName { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
 
-        public virtual User User { get; set; } = null!;
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }
