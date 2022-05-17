@@ -16,5 +16,27 @@ namespace UserService.GraphQL
                 Email = p.Email,
                 Username = p.Username
             });
+
+        [Authorize]
+        public IQueryable<Profile> GetProfiles([Service] Project1Context context, ClaimsPrincipal claimsPrincipal)
+        {
+            var userName = claimsPrincipal.Identity.Name;
+
+            // check admin role ?
+            var adminRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "ADMIN").FirstOrDefault();
+            var user = context.Users.Where(o => o.Username == userName).FirstOrDefault();
+            if (user != null)
+            {
+                if (adminRole != null)
+                {
+                    return context.Profiles;
+                }
+                var profiles = context.Profiles.Where(o => o.UserId == user.Id);
+                return profiles.AsQueryable();
+            }
+
+
+            return new List<Profile>().AsQueryable();
+        }
     }
 }
