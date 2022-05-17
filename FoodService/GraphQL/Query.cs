@@ -12,16 +12,35 @@ namespace FoodService.GraphQL
         {
             var userName = claimsPrincipal.Identity.Name;
 
-            // check manager role ?
-            var managerRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "MANAGER").FirstOrDefault();
-            var product = context.Users.Where(o => o.Username == userName).FirstOrDefault();
-            if (product != null)
+            // check buyer role ?
+            var buyerRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "BUYER").FirstOrDefault();
+            var food = context.Users.Where(o => o.Username == userName).FirstOrDefault();
+            if (food != null)
             {
-                if (managerRole != null)
+                if (buyerRole != null)
                     return context.Foods;
 
-                var products = context.Foods.Where(o => o.Id == product.Id);
-                return products.AsQueryable();
+                var foods = context.Foods.Where(o => o.Id == food.Id);
+                return foods.AsQueryable();
+            }
+            return new List<Food>().AsQueryable();
+        }
+
+        [Authorize]
+        public IQueryable<Food> GetFoodsBuyer([Service] Project1Context context, ClaimsPrincipal claimsPrincipal)
+        {
+            var userName = claimsPrincipal.Identity.Name;
+
+            // check buyer role ?
+            var buyerRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "BUYER").FirstOrDefault();
+            var food = context.Users.Where(o => o.Username == userName).FirstOrDefault();
+            if (food != null)
+            {
+                if (buyerRole != null)
+                    return context.Foods;
+
+                var foods = context.Foods.Where(o => o.Id == food.Id);
+                return foods.AsQueryable();
             }
             return new List<Food>().AsQueryable();
         }
