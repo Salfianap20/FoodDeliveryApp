@@ -38,5 +38,14 @@ namespace UserService.GraphQL
 
             return new List<Profile>().AsQueryable();
         }
+
+        [Authorize(Roles = new[] { "MANAGER" })] // dapat diakses kalau sudah login
+        public IQueryable<CourierData> GetCouriers([Service] Project1Context context) =>
+            context.Couriers.Select(c => new CourierData()
+            {
+                Id = c.Id,
+                CourierName = c.CourierName,
+                PhoneNumber = c.PhoneNumber
+            });
     }
 }
