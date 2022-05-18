@@ -7,7 +7,7 @@ namespace OrderService.GraphQL
     public class Mutation
     {
         [Authorize]
-        public async Task<OrderData> AddOrderAsync(
+        public async Task<OrderData> BuyFoodAsync(
         OrderData input,
         ClaimsPrincipal claimsPrincipal,
         [Service] Project1Context context)
@@ -52,8 +52,39 @@ namespace OrderService.GraphQL
             {
                 transaction.Rollback();
             }
-
             return input;
+        }
+
+        //Update 
+        [Authorize(Roles = new[] { "MANAGER" })]
+        public async Task<Order> UpdateOrderAsync(
+            OrderData input,
+            [Service] Project1Context context)
+        {
+            var order = context.Orders.Where(o => o.Id == input.Id).FirstOrDefault();
+            if (order != null)
+            {
+                order.CourierId = input.CourierId;
+
+                context.Orders.Update(order);
+                await context.SaveChangesAsync();
+            }
+            return await Task.FromResult(order);
+        }
+
+        //Delete
+        [Authorize(Roles = new[] { "MANAGER" })]
+        public async Task<Order> DeleteOrderByIdAsync(
+            int id,
+            [Service] Project1Context context)
+        {
+            var order = context.Orders.Where(o => o.Id == id).FirstOrDefault();
+            if (order != null)
+            {
+                context.Orders.Remove(order);
+                await context.SaveChangesAsync();
+            }
+            return await Task.FromResult(order);
         }
     }
 }
