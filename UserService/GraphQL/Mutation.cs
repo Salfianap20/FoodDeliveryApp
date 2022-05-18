@@ -72,7 +72,7 @@ namespace UserService.GraphQL
                 var claims = new List<Claim>();
                 claims.Add(new Claim(ClaimTypes.Name, user.Username));
 
-                var userRoles = context.UserRoles.Where(o => o.Id == user.Id).ToList();
+                var userRoles = context.UserRoles.Where(o => o.UserId == user.Id).ToList();
                 foreach (var userRole in userRoles)
                 {
                     var role = context.Roles.Where(o => o.Id == userRole.RoleId).FirstOrDefault();

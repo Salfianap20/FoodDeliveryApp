@@ -60,6 +60,12 @@ namespace FoodService.Models
 
                 entity.Property(e => e.Code).HasMaxLength(50);
 
+                entity.HasOne(d => d.Courier)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.CourierId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Order_Courier");
+
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.UserId)
@@ -70,12 +76,6 @@ namespace FoodService.Models
             modelBuilder.Entity<OrderDetail>(entity =>
             {
                 entity.ToTable("OrderDetail");
-
-                entity.HasOne(d => d.Courier)
-                    .WithMany(p => p.OrderDetails)
-                    .HasForeignKey(d => d.CourierId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderDetail_Courier");
 
                 entity.HasOne(d => d.Food)
                     .WithMany(p => p.OrderDetails)
@@ -136,13 +136,13 @@ namespace FoodService.Models
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.UserRoles)
                     .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_UserRole_Role");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserRoles)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_UserRole_User");
             });
 
