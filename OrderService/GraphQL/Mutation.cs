@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using HotChocolate.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using OrderService.Models;
 
 namespace OrderService.GraphQL
@@ -58,10 +59,10 @@ namespace OrderService.GraphQL
         //Update 
         [Authorize(Roles = new[] { "MANAGER" })]
         public async Task<Order> UpdateOrderAsync(
-            OrderData input,
+            UpdateCour input,
             [Service] Project1Context context)
         {
-            var order = context.Orders.Where(o => o.Id == input.Id).FirstOrDefault();
+            var order = context.Orders.Where(o => o.Id == input.Id).Include(o => o.OrderDetails).FirstOrDefault();
             if (order != null)
             {
                 order.CourierId = input.CourierId;
@@ -78,7 +79,7 @@ namespace OrderService.GraphQL
             int id,
             [Service] Project1Context context)
         {
-            var order = context.Orders.Where(o => o.Id == id).FirstOrDefault();
+            var order = context.Orders.Where(o => o.Id == id).Include(o => o.OrderDetails).FirstOrDefault();
             if (order != null)
             {
                 context.Orders.Remove(order);

@@ -9,7 +9,7 @@ namespace OrderService.GraphQL
     {
         [Authorize(Roles = new[] {"MANAGER"})]
         public IQueryable<Order> GetOrder([Service] Project1Context context) =>
-            context.Orders;
+            context.Orders.Include(o => o.OrderDetails);
 
         [Authorize]
         public IQueryable<Order> GetOrdersByToken([Service] Project1Context context, ClaimsPrincipal claimsPrincipal)
