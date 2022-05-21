@@ -27,7 +27,7 @@ namespace UserService.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           /* if (!optionsBuilder.IsConfigured)
+            /*if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=localhost;Database=Project1;uid=sa;pwd=1234;");
@@ -59,6 +59,10 @@ namespace UserService.Models
                 entity.ToTable("Order");
 
                 entity.Property(e => e.Code).HasMaxLength(50);
+
+                entity.Property(e => e.Latitude).HasMaxLength(200);
+
+                entity.Property(e => e.Longitude).HasMaxLength(200);
 
                 entity.HasOne(d => d.Courier)
                     .WithMany(p => p.Orders)

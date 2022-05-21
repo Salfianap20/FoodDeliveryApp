@@ -60,6 +60,10 @@ namespace FoodService.Models
 
                 entity.Property(e => e.Code).HasMaxLength(50);
 
+                entity.Property(e => e.Latitude).HasMaxLength(200);
+
+                entity.Property(e => e.Longitude).HasMaxLength(200);
+
                 entity.HasOne(d => d.Courier)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.CourierId)
@@ -136,13 +140,13 @@ namespace FoodService.Models
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.UserRoles)
                     .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserRole_Role");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserRoles)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserRole_User");
             });
 

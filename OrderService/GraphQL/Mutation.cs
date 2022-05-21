@@ -86,6 +86,29 @@ namespace OrderService.GraphQL
                 await context.SaveChangesAsync();
             }
             return await Task.FromResult(order);
+
+        }
+
+        //Add Tracking Order
+        //[Authorize(Roles = new[] { "Courier" })]
+        public async Task<Order> AddTrackingAsync(
+            TrackingInput input,
+            [Service] Project1Context context)
+        {
+
+            // EF
+            var order = new Order
+            {
+                UserId = input.UserId,
+                CourierId = input.CourierId,
+                Longitude = input.Longitude,
+                Latitude = input.Latitude
+            };
+
+            var ret = context.Orders.Add(order);
+            await context.SaveChangesAsync();
+
+            return ret.Entity;
         }
     }
 }

@@ -60,6 +60,10 @@ namespace OrderService.Models
 
                 entity.Property(e => e.Code).HasMaxLength(50);
 
+                entity.Property(e => e.Latitude).HasMaxLength(200);
+
+                entity.Property(e => e.Longitude).HasMaxLength(200);
+
                 entity.HasOne(d => d.Courier)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.CourierId)

@@ -28,7 +28,7 @@ namespace UserService.GraphQL
                 Username = input.UserName,
                 Password = BCrypt.Net.BCrypt.HashPassword(input.Password) // encrypt password
             };
-            //Memberikan role buyer secara otomatis
+           /* //Memberikan role buyer secara otomatis
             var memberRole = context.Roles.Where(m => m.Name == "BUYER").FirstOrDefault();
             if (memberRole == null)
                 throw new Exception("Invalid Role");
@@ -37,7 +37,7 @@ namespace UserService.GraphQL
                 RoleId = memberRole.Id,
                 UserId = newUser.Id
             };
-            newUser.UserRoles.Add(userRole);
+            newUser.UserRoles.Add(userRole);*/
             // EF
             var ret = context.Users.Add(newUser);
             await context.SaveChangesAsync();
@@ -124,7 +124,7 @@ namespace UserService.GraphQL
             int id,
             [Service] Project1Context context)
         {
-            var user = context.Users.Where(o => o.Id == id).Include(o => o.UserRoles).FirstOrDefault();
+            var user = context.Users.Where(o => o.Id == id).Include(o => o.UserRoles).Include(o => o.Orders).FirstOrDefault();
             if (user != null)
             {
                 context.Users.Remove(user);
@@ -173,6 +173,45 @@ namespace UserService.GraphQL
             return ret.Entity;
         }
         /*=====================================COURIER==========================================*/
+        /*public async Task<UserData> AddCourierAsync(
+            RegisterUser input,
+            [Service] Project1Context context)
+        {
+            var user = context.Users.Where(o => o.Username == input.UserName).FirstOrDefault();
+            if (user != null)
+            {
+                return await Task.FromResult(new UserData());
+            }
+            var newUser = new User
+            {
+                FullName = input.FullName,
+                Email = input.Email,
+                Username = input.UserName,
+                Password = BCrypt.Net.BCrypt.HashPassword(input.Password) // encrypt password
+            };
+            //Memberikan role courier secara otomatis
+             var memberRole = context.Roles.Where(m => m.Name == "COURIER").FirstOrDefault();
+             if (memberRole == null)
+                 throw new Exception("Invalid Role");
+             var userRole = new UserRole
+             {
+                 RoleId = memberRole.Id,
+                 UserId = newUser.Id
+             };
+             newUser.UserRoles.Add(userRole);
+            // EF
+            var ret = context.Users.Add(newUser);
+            await context.SaveChangesAsync();
+
+            return await Task.FromResult(new UserData
+            {
+                Id = newUser.Id,
+                Username = newUser.Username,
+                Email = newUser.Email,
+                FullName = newUser.FullName
+            });
+        }*/
+
         [Authorize(Roles = new[] { "MANAGER" })]
         public async Task<Courier> AddCourierAsync(
            CourierInput input,
