@@ -11,7 +11,7 @@ namespace OrderService.Models
         }
 
         public int Id { get; set; }
-        public string Code { get; set; } = null!;
+        public string? Code { get; set; } = null!;
         public int UserId { get; set; }
         public int CourierId { get; set; }
         public string? Longitude { get; set; }
