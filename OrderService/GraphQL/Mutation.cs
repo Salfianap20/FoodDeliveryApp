@@ -90,7 +90,7 @@ namespace OrderService.GraphQL
         }
 
         //Add Tracking Order
-        //[Authorize(Roles = new[] { "Courier" })]
+        [Authorize(Roles = new[] { "Courier" })]
         public async Task<Order> AddTrackingAsync(
             TrackingInput input,
             [Service] Project1Context context)
