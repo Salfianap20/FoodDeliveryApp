@@ -23,5 +23,8 @@ namespace OrderService.GraphQL
             }
             return new List<Order>().AsQueryable();
         }
+        [Authorize(Roles = new[] { "BUYER" })]
+        public IQueryable<Order> GetTracking([Service] Project1Context context) =>
+               context.Orders;
     }
 }
